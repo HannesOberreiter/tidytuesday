@@ -3,7 +3,7 @@ source("functions/functions.R")
 library(ggwordcloud)
 library(ggtext)
 library(showtext)
-font_add_google("Source Sans Pro", "sourcesans")
+font_add_google("Roboto Slab", "custom")
 ## Automatically use showtext to render text for future devices
 showtext_auto()
 ## Tell showtext the resolution of the device,
@@ -91,13 +91,14 @@ p <- great_words %>%
     ggplot2::ggplot(aes(x = X, y = Y, color = lake)) +
     # Dirty helper for legend
     geom_point() +
-    ggplot2::geom_sf(color = "black", fill = "#6699CC") +
+    ggplot2::geom_sf(color = "#6699CC", fill = "#6699CC") +
     ggwordcloud::geom_text_wordcloud(
         aes(label = species, size = values_total_percent),
-        grid_size = 1
+        grid_size = 1,
+        family = "custom"
     ) +
     ggplot2::scale_size(range = c(2, 10)) +
-    ggplot2::scale_colour_manual(values = c("#882255", "#CC79A7", "#D55E00", "#009E73", "#585858", "#03533e")) +
+    ggplot2::scale_colour_manual(values = c("#882255", "#cf619e", "#D55E00", "#037c5c", "#585858", "#03533e")) +
     ggplot2::coord_sf(clip = "off") +
     xlab("") +
     ylab("") +
@@ -108,6 +109,7 @@ p <- great_words %>%
         color = ""
     ) +
     theme(
+        text = element_text(family = "custom"),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
@@ -142,5 +144,5 @@ p <- great_words %>%
         legend.text = element_text(color = "grey30", size = 15)
     ) +
     guides(colour = guide_legend(ncol = 2, nrow = 3, byrow = TRUE, override.aes = list(size = 10)))
-p
+
 fSaveImages("2021-06-08", p, w = 14, h = 10)
