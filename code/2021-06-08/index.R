@@ -3,7 +3,7 @@ source("functions/functions.R")
 library(ggwordcloud)
 library(ggtext)
 library(showtext)
-font_add_google("Roboto Slab", "custom")
+font_add_google("Oswald", "custom")
 ## Automatically use showtext to render text for future devices
 showtext_auto()
 ## Tell showtext the resolution of the device,
@@ -121,16 +121,15 @@ p <- great_words %>%
             hjust = 0,
             margin = margin(t = 0)
         ),
-        plot.subtitle = ggtext::element_markdown(
-            color = "grey30", size = 15,
-            lineheight = 1.35,
-            hjust = 0,
-            margin = margin(t = 10, b = 0)
-        ),
         plot.title.position = "plot",
         strip.background = element_rect(
             fill = "white",
             colour = "black", size = rel(2)
+        ),
+        plot.subtitle = element_markdown(
+            color = "grey30", size = 12,
+            lineheight = 1.2, hjust = 0,
+            margin = margin(t = 4, b = 0)
         ),
         plot.caption = element_text(
             color = "grey30", size = 8,
