@@ -50,17 +50,17 @@ distinct_all <- fishing_clean %>%
 
 # Wordcloud ----
 wordcloud <- fishing_clean %>%
-    drop_na(grand_total) %>%
-    filter(grand_total > 0) %>%
+    drop_na(values) %>%
     group_by(lake) %>%
-    mutate(grand_total_lake = sum(grand_total)) %>%
+    mutate(values_lakes = sum(values)) %>%
     group_by(lake, species) %>%
     summarise(
-        grand_total_percent = sum(grand_total) * 100 / grand_total_lake[[1]]
+        values_total_percent = sum(values) * 100 / values_lakes[[1]]
     )
 
+unique(wordcloud$lake)
 wordcloud %>%
-    ggplot(aes(label = species, size = grand_total_percent, color = grand_total_percent)) +
+    ggplot(aes(label = species, size = values_total_percent, color = values_total_percent)) +
     ggwordcloud::geom_text_wordcloud() +
     theme_bw() +
     facet_wrap(~lake)
@@ -93,17 +93,17 @@ p <- great_words %>%
     geom_point() +
     ggplot2::geom_sf(color = "black", fill = "#6699CC") +
     ggwordcloud::geom_text_wordcloud(
-        aes(label = species, size = grand_total_percent),
+        aes(label = species, size = values_total_percent),
         grid_size = 1
     ) +
     ggplot2::scale_size(range = c(2, 10)) +
-    ggplot2::scale_colour_manual(values = c("#882255", "#CC79A7", "#D55E00", "#009E73", "#585858")) +
+    ggplot2::scale_colour_manual(values = c("#882255", "#CC79A7", "#D55E00", "#009E73", "#585858", "#03533e")) +
     ggplot2::coord_sf(clip = "off") +
     xlab("") +
     ylab("") +
     ggplot2::labs(
         title = "Great Lakes - Relative Observation of Species 1915-2015",
-        subtitle = "Wordcloud size corresponds to the relative number of grand total observed species.",
+        subtitle = "Wordcloud size corresponds to production amounts relative to the grand total of each lake over the time period.",
         caption = "Source: Great Lakes Fishery Commission | Map: NaturalEarthData | Graphics by: Hannes Oberreiter | #TidyTuesday ",
         color = ""
     ) +
@@ -142,5 +142,5 @@ p <- great_words %>%
         legend.text = element_text(color = "grey30", size = 15)
     ) +
     guides(colour = guide_legend(ncol = 2, nrow = 3, byrow = TRUE, override.aes = list(size = 10)))
-
+p
 fSaveImages("2021-06-08", p, w = 14, h = 10)
