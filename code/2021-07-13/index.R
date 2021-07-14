@@ -69,15 +69,6 @@ axis_label_x <- data %>%
     pull(label)
 names(axis_label_x) <- axis_labels
 
-labels <- c(
-    setosa = "<img src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Iris_setosa.JPG/180px-Iris_setosa.JPG'
-    width='100' /><br>*I. setosa*",
-    virginica = "<img src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Iris_virginica_-_NRCS.jpg/320px-Iris_virginica_-_NRCS.jpg'
-    width='100' /><br>*I. virginica*",
-    versicolor = "<img src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/20140427Iris_versicolor1.jpg/320px-20140427Iris_versicolor1.jpg'
-    width='100' /><br>*I. versicolor*"
-)
-
 # Plotting
 p <- data %>%
     ggplot(aes(Snack_Character, Caught_Character, fill = ratio, label = label)) +
