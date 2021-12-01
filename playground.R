@@ -288,3 +288,144 @@ died %>%
     theme_bw()
 
 ?strptime
+
+library(tidyverse)
+library(tidytext)
+library(jsonlite)
+library(fuzzyjoin)
+# Comments
+request <- httr::GET(
+    "https://www.reddit.com/r/Austria/comments/p2uhuq/wie_viel_verdient_ihr_so.json",
+    httr::add_headers(`User-agent` = "hoberreiter@gmail.com")
+)
+response <- httr::content(request, as = "text", encoding = "UTF-8")
+df <- fromJSON(response, flatten = TRUE) %>%
+    tibble()
+df <- df$data.children[[2]]
+# Jobs
+request <- httr::GET(
+    "https://www.xing.com/campus/api/v1/job_titles?fields=name%2Cslug&locale=de&per_page=1000&sort=slug",
+    httr::add_headers(`User-agent` = "hoberreiter@gmail.com")
+)
+(response <- httr::content(request, as = "text", encoding = "UTF-8"))
+jobs <- fromJSON(response, flatten = TRUE) %>%
+    tibble()
+# cleanup
+jobs <- jobs[2, ] %>% unnest(cols = c(.))
+
+fuzzy_join()
+df %>%
+    select(data.body) %>%
+    drop_na() %>%
+    tidytext::unnest_tokens(word, `data.body`) %>%
+    glimpse() %>%
+    fuzzyjoin::stringdist_left_join(jobs, by = c("word" = "name"), max_dist = 1) %>%
+    drop_na(name)
+
+
+??stringdist
+
+# Calculates Coordinates for plotting
+# of a network in circle
+fCircleCoordinates <- function(names) {
+    source("fCircleCoordinates.R", local = TRUE)
+}
+
+# Simple Testcase
+typeof(fCircleCoordinates(tibble())) == "list"
+nrow(fCircleCoordinates(tibble("test"))) == 1
+
+
+
+mean1 <- function(x) mean(x)
+mean2 <- function(x) sum(x) / length(x)
+x <- runif(1e5)
+bench::mark(
+    mean1(x),
+    mean2(x)
+)[c("expression", "min", "median", "itr/sec", "n_gc")]
+
+
+f <- function() {
+    profvis::pause(0.1)
+    g()
+    h()
+}
+g <- function() {
+    profvis::pause(0.1)
+    h()
+}
+h <- function() {
+    profvis::pause(0.1)
+}
+
+profvis::profvis(f())
+
+gctorture2(0)
+f <- function() {
+    return(NULL)
+}
+profvis::profvis(f(), torture = 10)
+
+f <- function(n = 1e5) {
+    x <- rep(1, n)
+    rm(x)
+}
+profvis::profvis(f())
+profvis::profvis(f(), torture = 10)
+
+
+
+library(tidyverse)
+x <- data.frame(letter_col = c("a", "a", "b", "b"))
+
+f <- function(x, which_to_keep = "All") {
+    x %>% filter(
+        if (which_to_keep == "All") TRUE else letter_col == which_to_keep
+    )
+}
+
+f(x, "All")
+f(x, "a")
+f(x, "Not present")
+
+which_to_keep <- "a"
+x <- if (which_to_keep == "All") .
+
+x %>%
+    filter(
+        # the infamous dot (.) would also work in this example as TRUE condition
+        letter_col == if (which_to_keep == "All") letter_col else which_to_keep
+    )
+
+library(tidyverse)
+x <- data.frame(letter_col = c("a", "a", "b", "b"))
+
+f <- function(x, which_to_keep = "All") {
+    x %>% filter(
+        if (which_to_keep == "All") TRUE else letter_col == which_to_keep
+    )
+}
+
+f(x, "All")
+f(x, "a")
+f(x, "Not present")
+
+
+f2 <- function(x, which_to_keep = "All") {
+    x %>% filter(
+        # the infamous dot (.) would also work as TRUE condition
+        letter_col == if (which_to_keep == "All") letter_col else which_to_keep
+    )
+}
+
+f3 <- function(x, which_to_keep = "All") {
+    x %>% filter(
+        letter_col == which_to_keep | which_to_keep == "All"
+    )
+}
+
+f2(x, "All")
+f2(x, "b")
+f3(x, "All")
+f3(x, "b")
