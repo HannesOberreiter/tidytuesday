@@ -1,13 +1,10 @@
 source("partials/setup.R")
 
-numbers_data <- readr::read_lines("aoc/2021/04/data.csv", n_max = 1)
-boards_data <- readr::read_lines("aoc/2021/04/data.csv", skip = 2)
-# Tidy Data
-numbers <- numbers_data %>%
+numbers <- readr::read_lines("aoc/2021/04/test.csv", n_max = 1) %>%
     str_split(",", simplify = FALSE) %>%
     unlist() %>%
     as.numeric()
-boards_data <- boards_data %>%
+boards_data <- readr::read_lines("aoc/2021/04/test.csv", skip = 2) %>%
     str_split(" ") %>%
     unlist() %>%
     as.numeric()
@@ -34,22 +31,14 @@ for (i in 1:length(numbers)) {
         found <- which(boards[[j]] == number, arr.ind = TRUE)
         # update dummy
         boards_dummy[[j]][found] <- TRUE
-        if (5 %in% rowSums(boards_dummy[[j]])) {
-            print(glue::glue("Board {j} is the winner, last number {number}"))
-            print(sum(boards[[j]][!boards_dummy[[j]]]) * number)
-            breaking <- TRUE
-            break
-        }
-        if (5 %in% colSums(boards_dummy[[j]])) {
+        if (5 %in% rowSums(boards_dummy[[j]]) | 5 %in% colSums(boards_dummy[[j]])) {
             print(glue::glue("Board {j} is the winner, last number {number}"))
             print(sum(boards[[j]][!boards_dummy[[j]]]) * number)
             breaking <- TRUE
             break
         }
     }
-    if (breaking) {
-        break
-    }
+    if (breaking) break
 }
 
 # Part 2
@@ -65,16 +54,7 @@ for (i in 1:length(numbers)) {
         found <- which(boards[[j]] == number, arr.ind = TRUE)
         # update dummy
         boards_dummy[[j]][found] <- TRUE
-        if (5 %in% rowSums(boards_dummy[[j]])) {
-            print(glue::glue("Board {j} is the winner, last number {number}"))
-            print(sum(boards[[j]][!boards_dummy[[j]]]) * number)
-            last_winner_board <- boards[[j]]
-            boards[[j]] <- matrix(1000L)
-            last_dummy_board <- boards_dummy[[j]]
-            boards_dummy[[j]] <- matrix(FALSE)
-            last_winner_number <- number
-        }
-        if (5 %in% colSums(boards_dummy[[j]])) {
+        if (5 %in% rowSums(boards_dummy[[j]]) | 5 %in% colSums(boards_dummy[[j]])) {
             print(glue::glue("Board {j} is the winner, last number {number}"))
             print(sum(boards[[j]][!boards_dummy[[j]]]) * number)
             last_winner_board <- boards[[j]]
