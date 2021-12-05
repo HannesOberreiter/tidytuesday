@@ -33,3 +33,15 @@ for (i in 1:nrow(vents_diag)) {
     vent_map[diag_matrix] <- vent_map[diag_matrix] + 1
 }
 length(vent_map[vent_map > 1])
+
+
+# Plot it
+vent_map %>%
+    as_tibble() %>%
+    rownames_to_column("id") %>%
+    pivot_longer(-c(id), values_to = "counts") %>%
+    ggplot(aes(x = name, y = id, fill = counts)) +
+    geom_raster() +
+    ggplot2::scale_fill_viridis_c(option = "inferno") +
+    theme_void() +
+    ggplot2::coord_equal()
