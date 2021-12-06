@@ -1,4 +1,5 @@
 source("partials/setup.R")
+source("functions/functions.R")
 
 # Load Data
 vents <- readr::read_delim(
@@ -36,12 +37,20 @@ length(vent_map[vent_map > 1])
 
 
 # Plot it
-vent_map %>%
+p <- vent_map %>%
     as_tibble() %>%
     rownames_to_column("id") %>%
     pivot_longer(-c(id), values_to = "counts") %>%
     ggplot(aes(x = name, y = id, fill = counts)) +
-    geom_raster() +
+    geom_raster(show.legend = FALSE) +
     ggplot2::scale_fill_viridis_c(option = "inferno") +
     theme_void() +
-    ggplot2::coord_equal()
+    ggplot2::coord_equal() +
+    labs(title = " AoC - Day 5: Hydrothermal Venture", caption = "Advent of Code 2021, Hannes Oberreiter  ") +
+    ggplot2::theme(
+        panel.background = element_rect(fill = "black"),
+        plot.title = element_text(color = "white", margin = margin(t = 10, b = -20)),
+        plot.caption = element_text(color = "white", margin = margin(t = -15, b = 8, r = 10))
+    )
+
+fSaveImages("aoc5", p, w = 6)
