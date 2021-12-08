@@ -22,10 +22,22 @@ sum(digits %in% known$dig)
 # Sorting helper
 # https://stackoverflow.com/questions/5904797/how-to-sort-letters-in-a-string
 fSorter <- function(x) vapply(x, function(xi) paste(sort(strsplit(xi, NULL)[[1]]), collapse = ""), "")
+
+
+# Some Dirty Global Helper
+# so I dont leave tidy pipe :)
+known_named <- as.character()
 fNamer <- function(x) {
-    known_named <- x$input
-    names(known_named) <- x$num
-    known_named
+    known_named <<- x$input
+    names(known_named) <<- x$num
+    x
+}
+helper <- as.character()
+fHelper <- function(x) {
+    helper <<- known_named["8"] %>%
+        stringr::str_remove_all(glue::glue("[{known_named['3']}]")) %>%
+        stringr::str_remove_all(glue::glue("[{known_named['4']}]"))
+    x
 }
 
 final_solution <- 0
@@ -45,24 +57,17 @@ for (i in 1:nrow(data)) {
         input = inputs,
         length = stringr::str_length(input)
     ) %>%
-        left_join(known, by = c("length" = "dig"))
-
-    known_named <- fNamer(ws)
-    # Three
-    ws <- ws %>%
+        left_join(known, by = c("length" = "dig")) %>%
+        fNamer() %>%
         mutate(
             num = case_when(
                 !is.na(num) ~ as.integer(num),
                 length == 5 & stringr::str_count(input, glue::glue('[{known_named["1"]}]')) == 2 ~ 3L,
                 TRUE ~ NA_integer_
             )
-        )
-    known_named <- fNamer(ws)
-    # Helper for multiple numbers
-    helper <- known_named["8"] %>%
-        stringr::str_remove_all(glue::glue("[{known_named['3']}]")) %>%
-        stringr::str_remove_all(glue::glue("[{known_named['4']}]"))
-    ws <- ws %>%
+        ) %>%
+        fNamer() %>%
+        fHelper() %>%
         mutate(
             num = case_when(
                 !is.na(num) ~ as.integer(num),
@@ -71,9 +76,8 @@ for (i in 1:nrow(data)) {
                 length == 6 & stringr::str_count(input, glue::glue('[{known_named["3"]}]')) == 5 ~ 9L,
                 TRUE ~ NA_integer_
             )
-        )
-    known_named <- fNamer(ws)
-    ws <- ws %>%
+        ) %>%
+        fNamer() %>%
         mutate(
             num = case_when(
                 !is.na(num) ~ as.integer(num),
@@ -81,6 +85,7 @@ for (i in 1:nrow(data)) {
                 TRUE ~ 0L
             )
         )
+
     results_solution <- tibble(
         results = results
     ) %>%
