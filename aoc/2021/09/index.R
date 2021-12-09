@@ -106,22 +106,22 @@ background <- data %>%
 p <- background %>%
     ggplot(aes(x = name, y = id, fill = Depth)) +
     geom_raster(show.legend = FALSE) +
-    geom_raster(data = top_basins, aes(x = name, y = id, alpha = Depth), fill = "red", show.legend = FALSE, inherit.aes = FALSE) +
-    ggplot2::scale_fill_continuous(limits = c(0, 8), na.value = "black") +
+    geom_raster(data = top_basins, aes(x = name, y = id, alpha = Depth), fill = "#e2731e", show.legend = FALSE, inherit.aes = FALSE) +
+    ggplot2::scale_fill_continuous(limits = c(0, 8), na.value = "#0072B2") +
     # ggplot2::scale_fill_viridis_c(option = "cividis", direction = 0) +
     scale_alpha(range = c(0, 0.3)) +
     theme_void() +
     ggplot2::coord_equal() +
     labs(
-        title = "<b>AoC - Day 9: Smoke Basin</b>, <span style='color:red'>Top 5 biggest basins.</span>",
+        title = "<b>AoC - Day 9: Smoke Basin, <span style='color:#e2731e'>Top 5 biggest basins.</span></b>",
         subtitle = "",
         caption = "Advent of Code 2021, Hannes Oberreiter  "
     ) +
     ggplot2::theme(
-        panel.background = element_rect(fill = "black"),
+        panel.background = element_rect(fill = "#0072B2"),
         # plot.subtitle = ggtext::element_markdown(margin = margin(t = 10, b = -20, r = 50), hjust = 1),
         plot.title = ggtext::element_markdown(hjust = 0.5, color = "white", margin = margin(t = 30, b = -40)),
-        plot.caption = element_text(color = "white", margin = margin(t = -15, b = 8, r = 10))
+        plot.caption = element_text(color = "white", margin = margin(t = -15, b = 15), hjust = 0.5)
     )
 
 fSaveImages("aoc09", p, w = 10, h = 9.5)
