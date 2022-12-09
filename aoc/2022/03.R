@@ -1,5 +1,6 @@
 source("partials/setup.R")
 source("functions/functions.R")
+day <- "03"
 
 # A given rucksack always has the same number of items in each of its two compartments, so the first half of the characters represent items in the first compartment, 
 
@@ -8,7 +9,7 @@ source("functions/functions.R")
 
 items <- tibble(item = c(letters, LETTERS), prio = c(1:52))
 
-readr::read_lines("aoc/2022/03/data.txt") %>% 
+readr::read_lines(glue("aoc/2022/{day}.txt")) %>% 
   as_tibble() %>% 
   rowwise() %>% 
   mutate(
